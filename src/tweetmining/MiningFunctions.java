@@ -33,7 +33,7 @@ public class MiningFunctions {
   public final static String AccessToken = TwitterPersonalData.AccessToken;
   public final static String AccessTokenSecret = TwitterPersonalData.AccessTokenSecret;
   
-  private final String fichero1 = "/home/nacheteam/Escritorio/grafo_amistades.dat";
+  private final String fichero1 = "/~/Escritorio/grafo_amistades.dat";
   private final String fichero2 = "";
   private TwitterFactory tf;
   private twitter4j.Twitter twitter;
