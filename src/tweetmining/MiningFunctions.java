@@ -43,6 +43,13 @@ public class MiningFunctions {
   private StatusListener listener;
   public static long cont=0;
   
+  /**
+   * This method creates an instance of Miningfunctions based on your TwitterApss credentials.
+   * You should as well check filepaths to put yours.
+   * 
+   * @throws FileNotFoundException 
+   */
+  
   public MiningFunctions() throws FileNotFoundException
   {
     ConfigurationBuilder configurationBuilder = new ConfigurationBuilder();
@@ -103,6 +110,10 @@ public class MiningFunctions {
     twitterStream = new TwitterStreamFactory(configurationBuilder.build()).getInstance();
   }
   
+  /**
+   * This method mines data from a particular twitter user.
+   * @param user String which has the name of a Twitter user without @ 
+   */
   public void MineFromUser(String user)
   {       
     int pageno = 1;
@@ -143,6 +154,13 @@ public class MiningFunctions {
     pw2.close();
   }  
   
+  /**
+   * This method mines data from youw twitter account based on the query string that you pass by
+   * parameters.
+   * @param query Query you want to place.
+   * @throws FileNotFoundException
+   * @throws TwitterException 
+   */
   public void MineFromQuery(String query) throws FileNotFoundException, TwitterException
   {      
     Query q = new Query(query);
@@ -167,7 +185,9 @@ public class MiningFunctions {
       q = r.nextQuery();
     }while(r.hasNext());
   }
-  
+  /**
+   * Mines data from stream based on the Listener created in the constructor.
+   */  
   public void MineFromStream()
   {
     FilterQuery fq = new FilterQuery();
@@ -175,7 +195,10 @@ public class MiningFunctions {
     
     twitterStream.sample();
   }
-  
+  /**
+   * Private helping function in the mining process of a stream data.
+   * @throws FileNotFoundException 
+   */
   private void CloseWriteAndOpen() throws FileNotFoundException
   {
     pw.close();
