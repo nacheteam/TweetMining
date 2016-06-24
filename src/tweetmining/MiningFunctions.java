@@ -8,6 +8,7 @@ package tweetmining;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.time.Clock;
 import java.util.ArrayList;
@@ -33,12 +34,14 @@ public class MiningFunctions {
   public final static String AccessToken = TwitterPersonalData.AccessToken;
   public final static String AccessTokenSecret = TwitterPersonalData.AccessTokenSecret;
   
-  private final String fichero1 = "/~/Escritorio/grafo_amistades.dat";
-  private final String fichero2 = "";
+  private final String fichero1 = TwitterPersonalData.fichero1;
+  private final String fichero2 = TwitterPersonalData.fichero2;
+  private final String fichero3 = TwitterPersonalData.fichero3;
   private TwitterFactory tf;
   private twitter4j.Twitter twitter;
   public static PrintWriter pw;
   public static PrintWriter pw2;
+  public static PrintWriter pw3;
   private TwitterStream twitterStream;
   private StatusListener listener;
   public static long cont=0;
@@ -50,7 +53,7 @@ public class MiningFunctions {
    * @throws FileNotFoundException 
    */
   
-  public MiningFunctions() throws FileNotFoundException
+  public MiningFunctions() throws FileNotFoundException, IOException
   {
     ConfigurationBuilder configurationBuilder = new ConfigurationBuilder();
     configurationBuilder.setDebugEnabled(true)
@@ -64,16 +67,24 @@ public class MiningFunctions {
     twitter = tf.getInstance();
     
     File f = new File(fichero1);
-    //File f2 = new File(fichero2);
+    File f2 = new File(fichero2);
+    File f3 = new File(fichero3);
+    if(!f.exists())
+      f.createNewFile();
+    if(!f2.exists())
+      f2.createNewFile();
+    if(!f3.exists())
+      f3.createNewFile();
     pw = new PrintWriter(new FileOutputStream(f, true));
-    //pw2 = new PrintWriter(new FileOutputStream(f2, true));
+    pw2 = new PrintWriter(new FileOutputStream(f2, true));
+    pw3 = new PrintWriter(new FileOutputStream(f3, true));
     
     listener = new StatusListener(){
         public void onStatus(Status status) {
           if(status.getGeoLocation()!=null)
           {
             cont++;
-            System.out.println("Loc no es null----" + cont);
+            System.out.println("Loc not null----" + cont);
             GeoLocation loc = status.getGeoLocation();
             pw.println(String.valueOf(loc.getLatitude()) + ";" + String.valueOf(loc.getLongitude()) + ";" + status.getUser().getName());
             System.out.println(loc.getLatitude() + " " + loc.getLongitude() + " " + status.getUser().getName());
@@ -142,7 +153,7 @@ public class MiningFunctions {
         GeoLocation loc = st.getGeoLocation();
         if(loc!=null)
         {
-          System.out.println("Loc no null");
+          System.out.println("Loc not null");
           Double lat = loc.getLatitude();
           Double lon = loc.getLongitude();
           pw.println(lat.toString() + ";" + lon.toString() + ";" + st.getUser().getName());
@@ -173,14 +184,14 @@ public class MiningFunctions {
       List<Status> statuses = r.getTweets();
       for(Status st : statuses)
       {
-        //GeoLocation loc = st.getGeoLocation();
-        /*if(loc!=null)
+        GeoLocation loc = st.getGeoLocation();
+        if(loc!=null)
         {
-          System.out.println("Loc no null");
+          System.out.println("Loc not null");
           Double lat = loc.getLatitude();
           Double lon = loc.getLongitude();
           pw.println(lat.toString() + ";" + lon.toString() + ";" + st.getUser().getName());
-        }*/
+        }
       }
       q = r.nextQuery();
     }while(r.hasNext());
@@ -203,10 +214,31 @@ public class MiningFunctions {
   {
     pw.close();
     pw2.close();
+    pw3.close();
     File f = new File(fichero1);
-    //File f2 = new File(fichero2);
+    File f2 = new File(fichero2);
+    File f3 = new File(fichero3);
     pw = new PrintWriter(new FileOutputStream(f, true));
-    //pw2 = new PrintWriter(new FileOutputStream(f2, true));
+    pw2 = new PrintWriter(new FileOutputStream(f2, true));
+    pw3 = new PrintWriter(new FileOutputStream(f3, true));
+  }
+  
+  public ArrayList<String> CreateFriendsList(String user) throws TwitterException
+  {
+    ArrayList<String> friends = new ArrayList<String>();
+    long cursor = -1;
+    IDs ids;
+    
+    do
+    {
+      ids = twitter.getFollowersIDs(user, cursor);
+      for(long id : ids.getIDs())
+      {
+        friends.add(twitter.showUser(id).getName());
+      }
+    }while ((cursor=ids.getNextCursor())!=0);
+      
+    return friends;
   }
   
 }

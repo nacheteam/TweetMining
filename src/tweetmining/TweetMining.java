@@ -31,10 +31,16 @@ public class TweetMining {
   /**
    * @param args the command line arguments
    */
-  public static void main(String[] args) throws FileNotFoundException, TimeoutException, InterruptedException, IOException {
+  public static void main(String[] args) throws FileNotFoundException, TimeoutException, InterruptedException, IOException, TwitterException {
     // TODO code application logic here
     
     MiningFunctions miningFunctions = new MiningFunctions();
-    miningFunctions.MineFromStream();
+    ArrayList<String> friends = miningFunctions.CreateFriendsList(TwitterPersonalData.UserToMineFriends);
+    System.out.println(friends.size());
+    for(String name : friends)
+    {
+      System.out.println(name);
+    }
+    
   }
 }
