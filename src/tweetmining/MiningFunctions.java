@@ -222,7 +222,12 @@ public class MiningFunctions {
     pw2 = new PrintWriter(new FileOutputStream(f2, true));
     pw3 = new PrintWriter(new FileOutputStream(f3, true));
   }
-  
+  /**
+   * Returns an ArrayList with the names of the followers of a certain person.
+   * @param user User where you want to extract list of friends
+   * @return ArrayList of strings with friends names.
+   * @throws TwitterException 
+   */
   public ArrayList<String> CreateFriendsList(String user) throws TwitterException
   {
     ArrayList<String> friends = new ArrayList<String>();
@@ -239,6 +244,32 @@ public class MiningFunctions {
     }while ((cursor=ids.getNextCursor())!=0);
       
     return friends;
+  }
+  
+  private ArrayList<User> getRawUsers(String user) throws TwitterException
+  {
+    ArrayList<User> friends = new ArrayList<User>();
+    long cursor = -1;
+    IDs ids;
+    
+    do
+    {
+      ids = twitter.getFollowersIDs(user, cursor);
+      for(long id : ids.getIDs())
+      {
+        friends.add(twitter.showUser(id));
+      }
+    }while ((cursor=ids.getNextCursor())!=0);
+      
+    return friends;
+  }
+  /**
+   * The intention is to do a friends graph in a .dat file to be able to plot it with gnuplot.
+   * @param user User you want to make the graph about.
+   */
+  public void MakeFriendsGraph(String user)
+  {
+    
   }
   
 }
